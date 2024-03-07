@@ -10,7 +10,7 @@ use Util\JsonUtil;
 class RequestValidator { 
 
   private $request;
-  private array $dataRequest;
+  private array $dataRequest = [];
   private object $TokensAuthRepo; 
 
   const GET = 'GET';
@@ -61,6 +61,40 @@ class RequestValidator {
         case self::USUARIOS:
           $UserService = new UserService($this->request);
           $retorno = $UserService->validateDelete();
+          break;
+        default: 
+          throw new \InvalidArgumentException(GenericConstUtil::MSG_ERRO_RECURSO_INEXISTENTE);
+      }
+    }
+    return $retorno;
+  }
+
+  private function post() {
+    $retorno = mb_convert_encoding(GenericConstUtil::MSG_ERRO_TIPO_ROTA, 'UTF-8');
+    
+    if (in_array($this->request['rota'], GenericConstUtil::TIPO_POST, true)) {
+      switch($this->request['rota']) {
+        case self::USUARIOS:
+          $UserService = new UserService($this->request);
+          $UserService->setDataBodyReq($this->dataRequest);
+          $retorno = $UserService->validatePost();
+          break;
+        default: 
+          throw new \InvalidArgumentException(GenericConstUtil::MSG_ERRO_RECURSO_INEXISTENTE);
+      }
+    }
+    return $retorno;
+  }
+
+  private function put() {
+    $retorno = mb_convert_encoding(GenericConstUtil::MSG_ERRO_TIPO_ROTA, 'UTF-8');
+    
+    if (in_array($this->request['rota'], GenericConstUtil::TIPO_PUT, true)) {
+      switch($this->request['rota']) {
+        case self::USUARIOS:
+          $UserService = new UserService($this->request);
+          $UserService->setDataBodyReq($this->dataRequest);
+          $retorno = $UserService->validatePut();
           break;
         default: 
           throw new \InvalidArgumentException(GenericConstUtil::MSG_ERRO_RECURSO_INEXISTENTE);
