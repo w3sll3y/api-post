@@ -43,6 +43,27 @@ class Mysql {
     }
   }
 
+  public function deleteToken($table, $token) {
+    try {
+      $sqlDetele = 'DELETE FROM '. $table .' WHERE token = :token';
+      
+      if($table && $token) {
+        $this->db->beginTransaction();
+        $stmt = $this->db->prepare($sqlDetele);
+        $stmt->bindParam(':token', $token);
+        $stmt->execute();
+        if($stmt->rowCount() > 0) {
+          $this->db->commit();
+          return GenericConstUtil::MSG_DELETADO_SUCESSO;
+        }
+        $this->db->rollBack();
+        throw new InvalidArgumentException(GenericConstUtil::MSG_ERRO_SEM_RETORNO);
+      }
+    }catch (PDOException $exception){
+      throw new InvalidArgumentException(GenericConstUtil::MSG_ERRO_GENERICO);
+    }
+  }
+
   public function getAll($table) {
     if($table) {
       $sqlConsult = 'SELECT * FROM ' . $table;

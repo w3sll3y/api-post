@@ -4,6 +4,8 @@ namespace Validator;
 
 use Repository\TokensAuthRepo;
 use Service\UserService;
+use Service\PostService;
+use Service\LoginService;
 use Util\GenericConstUtil;
 use Util\JsonUtil;
 
@@ -16,6 +18,8 @@ class RequestValidator {
   const GET = 'GET';
   const DELETE = 'DELETE';
   const USUARIOS = 'USUARIOS';
+  const POSTS = 'POSTS';
+  const LOGIN = 'LOGIN';
   public function __construct($request) {
     $this->request = $request;
     $this->TokensAuthRepo = new TokensAuthRepo();
@@ -32,8 +36,10 @@ class RequestValidator {
   private function directRequest() {
     if($this->request['metodo'] !== self::GET && $this->request['metodo'] !== self::DELETE) {
       $this->dataRequest = JsonUtil::BodyJsonReq();
+    } 
+    if($this->request['rota'] === self::POSTS || $this->request['rota'] === self::POSTS) {
+      $this->TokensAuthRepo->validToken(getallheaders()['Authorization']);
     }
-    $this->TokensAuthRepo->validToken(getallheaders()['Authorization']);
     $method = $this->request['metodo'];
     return $this->$method();
   }
@@ -46,6 +52,10 @@ class RequestValidator {
           $UserService = new UserService($this->request);
           $retorno = $UserService->validateGet();
           break;
+        case self::POSTS:
+            $PostService = new PostService($this->request);
+            $retorno = $PostService->validateGetPost();
+            break;
         default: 
           throw new \InvalidArgumentException(GenericConstUtil::MSG_ERRO_RECURSO_INEXISTENTE);
       }
@@ -61,6 +71,10 @@ class RequestValidator {
         case self::USUARIOS:
           $UserService = new UserService($this->request);
           $retorno = $UserService->validateDelete();
+          break;
+        case self::POSTS:
+          $PostService = new PostService($this->request);
+          $retorno = $PostService->validateDelete();
           break;
         default: 
           throw new \InvalidArgumentException(GenericConstUtil::MSG_ERRO_RECURSO_INEXISTENTE);
@@ -79,6 +93,23 @@ class RequestValidator {
           $UserService->setDataBodyReq($this->dataRequest);
           $retorno = $UserService->validatePost();
           break;
+        case self::POSTS:
+          $PostService = new PostService($this->request);
+          $PostService->setDataBodyReq($this->dataRequest);
+          $retorno = $PostService->validatePost();
+          break;
+        case self::LOGIN:
+          if($this->request['recurso'] === 'login') {
+            $LoginService = new LoginService($this->request);
+            $LoginService->setDataBodyReq($this->dataRequest);
+            $retorno = $LoginService->validatePost();
+          }
+          if($this->request['recurso'] === 'logout') {
+            $LoginService = new LoginService($this->request);
+            $LoginService->setDataBodyReq($this->dataRequest);
+            $retorno = $LoginService->validateDelete();
+          }
+          break;
         default: 
           throw new \InvalidArgumentException(GenericConstUtil::MSG_ERRO_RECURSO_INEXISTENTE);
       }
@@ -96,10 +127,16 @@ class RequestValidator {
           $UserService->setDataBodyReq($this->dataRequest);
           $retorno = $UserService->validatePut();
           break;
+        case self::POSTS:
+          $PostService = new PostService($this->request);
+          $PostService->setDataBodyReq($this->dataRequest);
+          $retorno = $PostService->validatePut();
+          break;
         default: 
           throw new \InvalidArgumentException(GenericConstUtil::MSG_ERRO_RECURSO_INEXISTENTE);
       }
     }
     return $retorno;
   }
+
 }

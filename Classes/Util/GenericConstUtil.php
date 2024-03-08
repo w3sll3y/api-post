@@ -4,10 +4,10 @@ namespace Util;
 
 abstract class GenericConstUtil {
   public const TIPO_REQUEST = ['GET', 'POST', 'DELETE', 'PUT'];
-  public const TIPO_GET = ['USUARIOS'];
-  public const TIPO_POST = ['USUARIOS'];
-  public const TIPO_DELETE = ['USUARIOS'];
-  public const TIPO_PUT = ['USUARIOS'];
+  public const TIPO_GET = ['USUARIOS', 'POSTS', 'LOGIN'];
+  public const TIPO_POST = ['USUARIOS', 'POSTS', 'LOGIN'];
+  public const TIPO_DELETE = ['USUARIOS', 'POSTS', 'LOGIN'];
+  public const TIPO_PUT = ['USUARIOS', 'POSTS', 'LOGIN'];
 
   /* ERROS */
   public const MSG_ERRO_TIPO_ROTA = 'Rota não permitida!';
