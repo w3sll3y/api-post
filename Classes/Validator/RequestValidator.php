@@ -38,7 +38,7 @@ class RequestValidator {
       $this->dataRequest = JsonUtil::BodyJsonReq();
     } 
     if($this->request['rota'] === self::POSTS || $this->request['rota'] === self::POSTS) {
-      $this->TokensAuthRepo->validToken(getallheaders()['Authorization']);
+      $this->TokensAuthRepo->validToken(getallheaders()['authorization']);
     }
     $method = $this->request['metodo'];
     return $this->$method();
