@@ -6,6 +6,7 @@ use Repository\TokensAuthRepo;
 use Service\UserService;
 use Service\PostService;
 use Service\LoginService;
+use Service\CommentsService;
 use Util\GenericConstUtil;
 use Util\JsonUtil;
 
@@ -19,6 +20,7 @@ class RequestValidator {
   const DELETE = 'DELETE';
   const USUARIOS = 'USUARIOS';
   const POSTS = 'POSTS';
+  const COMENTARIO = 'COMENTARIO';
   const LOGIN = 'LOGIN';
   public function __construct($request) {
     $this->request = $request;
@@ -56,6 +58,10 @@ class RequestValidator {
             $PostService = new PostService($this->request);
             $retorno = $PostService->validateGetPost();
             break;
+        case self::COMENTARIO:
+          $CommentsService = new CommentsService($this->request);
+          $retorno = $CommentsService->validateGet();
+          break;
         default: 
           throw new \InvalidArgumentException(GenericConstUtil::MSG_ERRO_RECURSO_INEXISTENTE);
       }
@@ -109,6 +115,11 @@ class RequestValidator {
             $LoginService->setDataBodyReq($this->dataRequest);
             $retorno = $LoginService->validateDelete();
           }
+          break;  
+        case self::COMENTARIO:
+          $CommentsService = new CommentsService($this->request);
+          $CommentsService->setDataBodyReq($this->dataRequest);
+          $retorno = $CommentsService->validatePost();
           break;
         default: 
           throw new \InvalidArgumentException(GenericConstUtil::MSG_ERRO_RECURSO_INEXISTENTE);

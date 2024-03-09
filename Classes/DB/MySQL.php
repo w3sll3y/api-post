@@ -90,6 +90,21 @@ class Mysql {
     }
     throw new InvalidArgumentException(GenericConstUtil::MSG_ERRO_ID_OBRIGATORIO);
   }
+
+  public function getByIdComment($table, $id) {
+    if($table && $id) { 
+      $sqlConsult = 'SELECT * FROM '. $table . ' WHERE postId = :id';
+      $stmt = $this->db->prepare($sqlConsult);
+      $stmt->bindParam(':id', $id);
+      $stmt->execute();
+      $dataTotal = $stmt->rowCount();
+      if($dataTotal > 0) {
+        return $stmt->fetchAll($this->db::FETCH_ASSOC);
+      }
+      throw new InvalidArgumentException(GenericConstUtil::MSG_ERRO_SEM_RETORNO);
+    }
+    throw new InvalidArgumentException(GenericConstUtil::MSG_ERRO_ID_OBRIGATORIO);
+  }
   public function getDB() {
     return $this->db;
   }
