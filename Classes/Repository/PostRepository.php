@@ -47,4 +47,16 @@ class PostRepository {
     $stmt->execute();
     return $stmt->rowCount();
   }
+
+  public function updatePostByLike($id, $data) {
+    $consultUpdate = 'UPDATE ' . self::TABLE . ' SET likes_count = :likes_count WHERE id = :id';
+    
+
+    $this->MySQL->getDB()->beginTransaction();
+    $stmt = $this->MySQL->getDB()->prepare($consultUpdate);
+    $stmt->bindParam(':id', $id);
+    $stmt->bindParam(':likes_count', $data['likes_count']);
+    $stmt->execute();
+    return $stmt->rowCount();
+  }
 }

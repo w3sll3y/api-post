@@ -128,9 +128,15 @@ class RequestValidator {
           $retorno = $UserService->validatePut();
           break;
         case self::POSTS:
-          $PostService = new PostService($this->request);
-          $PostService->setDataBodyReq($this->dataRequest);
-          $retorno = $PostService->validatePut();
+          if($this->request['recurso'] === 'like') { 
+            $PostService = new PostService($this->request);
+            $PostService->setDataBodyReq($this->dataRequest);
+            $retorno = $PostService->validatePutLiked();
+          } if($this->request['recurso'] === 'atualizar') {
+            $PostService = new PostService($this->request);
+            $PostService->setDataBodyReq($this->dataRequest);
+            $retorno = $PostService->validatePut();
+          }
           break;
         default: 
           throw new \InvalidArgumentException(GenericConstUtil::MSG_ERRO_RECURSO_INEXISTENTE);
